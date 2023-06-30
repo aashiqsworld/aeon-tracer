@@ -56,7 +56,8 @@ int main() {
 
 
 	// Camera
-	camera cam;
+	// camera cam;
+	camera cam(90.0, aspect_ratio);
 
 
 	// Render

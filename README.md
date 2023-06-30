@@ -1,6 +1,6 @@
 # aashiq's cpu ray tracer
 
-My CPU ray tracer, written in C++. I am writing this to validate my fundamentals in linear algebra and computer graphics from the ground up. I will continually update it with new features. I am documenting my process [here](/writeup/writeup.md).
+My CPU ray tracer, written in C++. I am writing this to validate my fundamentals in linear algebra and computer graphics from the ground up. I will continually update it with new features. I am documenting my process [here](/writeup/writeup.md). Based on [ray tracing in one weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html#metal).
 
 
 

@@ -75,17 +75,45 @@ hittable_list random_scene() {
     return world;
 }
 
+int round4(int x)
+{
+    return x % 4 == 0 ? x : x - x % 4 + 4;
+}
+
+void write_bmp(char *filename, color pixels[], int length, int width)
+{
+    int height = (length / 3) / width;
+
+    // Pad the width of the destination to a multiple of 4
+    int padded_width = round4(width * 3);
+
+    int bitmap_size = height * padded_width * 3;
+    char *bitmap = (char *) malloc(bitmap_size * sizeof(char));
+    for (int i = 0; i < bitmap_size; i++) bitmap[i] = 0;
+
+    // For each pixel in the RGB image
+
+}
 
 // renders a ray in the scene
 int main() {
 	
 	// Image
-
+    const char *filename = "image.bmp";
 	const auto aspect_ratio = 3.0 / 2.0;
-	const int image_width = 1200;
+	const int image_width = 600;
 	const int image_height = static_cast<int>(image_width / aspect_ratio);
-	const int samples_per_pixel = 10;
+	const int samples_per_pixel = 6;
 	const int max_depth = 50;
+
+    // bmp vars
+    int padded_width = round4(image_width * 3);
+    int bitmap_size = image_height * padded_width * 3;
+    char *bitmap = (char *) malloc(bitmap_size * sizeof(char));
+    for (int i = 0; i < bitmap_size; i++) bitmap[i] = 0;
+
+
+
 
 	// World
 	auto world = random_scene();
@@ -103,8 +131,7 @@ int main() {
 
 
 	// Render
-
-	std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+//	std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
 	for (int j = image_height-1; j >= 0; --j)
 	{
@@ -119,9 +146,26 @@ int main() {
 				ray r = cam.get_ray(u, v);
 				pixel_color += ray_color(r, world, max_depth);
 			}
-			write_color(std::cout, pixel_color, samples_per_pixel);
+//			write_color(std::cout, pixel_color, samples_per_pixel);
+            int index = j * padded_width + i * 3;
+            bitmap[index  ] = pixel_color.r_char(samples_per_pixel);
+            bitmap[index+1] = pixel_color.g_char(samples_per_pixel);
+            bitmap[index+2] = pixel_color.b_char(samples_per_pixel);
 		}
 	}
+
+    char tag[] = { 'B', 'M' };
+    int header[] = {
+            0, 0, 0x36, 0x28, image_width, image_height, 0x180001,
+            0, 0, 0x002e23, 0x002e23, 0, 0
+    };
+    header[0] = sizeof(tag) + sizeof(header) + bitmap_size;
+    FILE *fp = fopen(filename, "w+");
+    fwrite(&tag, sizeof(tag), 1, fp);
+    fwrite(&header, sizeof(header), 1, fp);
+    fwrite(bitmap, bitmap_size * sizeof(char), 1, fp);
+    fclose(fp);
+    free(bitmap);
 
 	std::cerr << "\nDone.\n";
 }

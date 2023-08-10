@@ -18,6 +18,24 @@ class vec3 {
         double y() const { return e[1]; }
         double z() const { return e[2]; }
 
+        char r_char(int samples_per_pixel) const {
+            auto scale = 1.0 / samples_per_pixel;
+            auto r = sqrt(scale * e[0]);
+            return static_cast<char>(256 * clamp(r, 0.0, 0.999));
+        }
+
+        char g_char(int samples_per_pixel) const {
+            auto scale = 1.0 / samples_per_pixel;
+            auto r = sqrt(scale * e[1]);
+            return static_cast<char>(256 * clamp(r, 0.0, 0.999));
+        }
+
+        char b_char(int samples_per_pixel) const {
+            auto scale = 1.0 / samples_per_pixel;
+            auto r = sqrt(scale * e[2]);
+            return static_cast<char>(256 * clamp(r, 0.0, 0.999));
+        }
+
         vec3 operator-() const { return vec3(-e[0], -e[1], -e[2]); }
         double operator[](int i) const { return e[i]; }
         double& operator[](int i) { return e[i]; }

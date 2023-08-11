@@ -80,24 +80,10 @@ int round4(int x)
     return x % 4 == 0 ? x : x - x % 4 + 4;
 }
 
-void write_bmp(char *filename, color pixels[], int length, int width)
-{
-    int height = (length / 3) / width;
-
-    // Pad the width of the destination to a multiple of 4
-    int padded_width = round4(width * 3);
-
-    int bitmap_size = height * padded_width * 3;
-    char *bitmap = (char *) malloc(bitmap_size * sizeof(char));
-    for (int i = 0; i < bitmap_size; i++) bitmap[i] = 0;
-
-    // For each pixel in the RGB image
-
-}
-
 // renders a ray in the scene
 int main() {
-	
+
+
 	// Image
     const char *filename = "image.bmp";
 	const auto aspect_ratio = 3.0 / 2.0;

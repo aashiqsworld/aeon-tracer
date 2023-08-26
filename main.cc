@@ -16,7 +16,7 @@ color ray_color(const ray& r, const hittable& world, int depth)
 	if(depth <= 0)
 		return color(0, 0, 0);
 
-	if(world.hit(r, 0.001, infinity, rec))
+	if(world.hit(r, interval(0,infinity), rec))
 	{
 		ray scattered;
 		color attenuation;

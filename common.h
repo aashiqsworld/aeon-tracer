@@ -41,6 +41,7 @@ inline double clamp(double x, double min, double max)
 }
 
 // Common headers
+#include "interval.h"
 #include "ray.h"
 #include "vec3.h"
 

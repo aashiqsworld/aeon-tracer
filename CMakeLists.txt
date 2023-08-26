@@ -15,4 +15,5 @@ add_executable(cpu_ray_tracer
         material.h
         ray.h
         sphere.h
-        vec3.h)
+        vec3.h
+        interval.h)

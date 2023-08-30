@@ -8,6 +8,8 @@
 #include "hittable.h"
 #include "vec3.h"
 
+using namespace std;
+
 class triangle : public hittable
 {
 public:
@@ -66,6 +68,13 @@ bool triangle::hit(const ray& r, interval ray_t, hit_record& rec) const
         return false;
 }
 
+inline std::ostream& operator<<(std::ostream &out, const triangle &t)
+{
+    return out << "Triangle: " << endl <<
+    "v1: (" << t.vertices[0] << ")  (" << t.vertices[1] << ")  (" << t.vertices[2] << ")" <<
+    "normal: (" << t.normal << ")";
+
+}
 
 
 #endif

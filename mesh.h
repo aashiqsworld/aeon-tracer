@@ -14,75 +14,11 @@
 #include "vec3.h"
 #include "int3.h"
 #include "common.h"
+#include "triangle.h"
 
 using namespace std;
 
-struct triangle
-{
-    int3 vIndices;
-    int nIndex;
-    vec3* triVertices[3]; // pointers to positions in vertex array
-    vec3 n;
 
-
-    triangle() {
-        vIndices = int3();
-        nIndex = 0;
-        triVertices[0] = nullptr;
-        triVertices[1] = nullptr;
-        triVertices[2] = nullptr;
-        n = vec3();
-    }
-
-    friend inline ostream& operator<<(std::ostream &strm, const triangle &tri) {
-        return strm << fixed << setprecision(1) << "Triangle: " << endl <<
-            "v0(" << *tri.triVertices[0] << ")  v1(" << *tri.triVertices[1] << ")  v2(" << *tri.triVertices[2] << ")  " << endl <<
-            "n(" << tri.n << ")" << endl;
-
-    }
-
-    static bool rayTriangleIntersection(const ray& r, const triangle& tri, interval ray_t, vec3& hit_pos)
-    {
-
-        vec3 vertex0 = *tri.triVertices[0];
-        vec3 vertex1 = *tri.triVertices[1];
-        vec3 vertex2 = *tri.triVertices[2];
-        vec3 edge1, edge2, h, s, q;
-        float a, f, u, v;
-        edge1 = vertex1 - vertex0;
-        edge2 = vertex2 - vertex0;
-        h = cross(r.direction(),edge2);
-        a = dot(edge1,h);
-
-        if(a > -EPSILON && a < EPSILON)
-            return false; // This ray is parallel to this triangle
-
-        f = 1.0 / a;
-        s = r.origin() - vertex0;
-        u = f * dot(s,h);
-
-        if(u < 0.0 || u > 1.0)
-            return false;
-
-        q = cross(s, edge1);
-        v = f * dot(r.direction(),q);
-
-        if(v < 0.0 || u + v > 1.0)
-            return false;
-
-        // At this stage we can compute t to find out where the intersection point is on the line
-
-        float t = f * dot(edge2,q);
-
-        if(t > EPSILON)
-        {
-            hit_pos = r.origin() + r.direction() * t;
-            return true;
-        }
-        else // This means there is a line intersection but not a ray intersection
-            return false;
-    }
-};
 
 class mesh : public hittable
 {
@@ -110,6 +46,10 @@ private:
 bool mesh::loadObjModel(char *filename) {
     string line;
     ifstream objFile (filename);
+
+    vector<int3> vertexIndices;
+    vector<int> normalIndices;
+
     if(objFile.is_open())
     {
         // process every line in the file
@@ -135,7 +75,8 @@ bool mesh::loadObjModel(char *filename) {
             }
             else if(lineType == "f")
             {
-                auto tempFace = triangle();
+                auto tempVertexIndices = int3();
+                auto tempNormalIndex = 0;
                 string faceValues[3];
                 iss >> faceValues[0] >> faceValues[1] >> faceValues[2];
 
@@ -156,27 +97,28 @@ bool mesh::loadObjModel(char *filename) {
 
                     if(!result.empty() && !result[0].empty()) // vertex
                     {
-                        tempFace.vIndices[j] = stoi(result[0]);
+                        tempVertexIndices[j] = stoi(result[0]);
                     }
                     if (result.size() > 1 && !result[1].empty()) // texture coordinate
                     { }
                     if (result.size() > 2 && !result[2].empty()) // vertex normal
                     {
-                        tempFace.nIndex = stoi(result[2]);
+                        tempNormalIndex = stoi(result[2]);
                     }
                 }
-                triangles.emplace_back(tempFace);
+                vertexIndices.emplace_back(tempVertexIndices);
+                normalIndices.emplace_back(tempNormalIndex);
             }
         }
         objFile.close();
 
         // add pointers to relevant vertices for each triangle
-        for(auto & t : triangles)
+        int c = 0;
+        for(int i = 0; i < vertexIndices.size(); i++)
         {
-            t.triVertices[0] = &vertices[t.vIndices[0]];
-            t.triVertices[1] = &vertices[t.vIndices[1]];
-            t.triVertices[2] = &vertices[t.vIndices[2]];
-            t.n = vertexNormals[t.nIndex];
+            auto t = triangle(vertices[vertexIndices[i].x()], vertices[vertexIndices[i].y()], vertices[vertexIndices[i].z()]);
+            t.setNormal(vertexNormals[normalIndices[i]]);
+            triangles.emplace_back(t);
         }
     }
     else cout << "Unable to open file.";
@@ -185,13 +127,13 @@ bool mesh::loadObjModel(char *filename) {
 
 bool mesh::hit(const ray& r, interval ray_t, hit_record& rec) const
 {
-    vector<vec3> hits;
+    vector<hit_record> hits;
     for(auto & t : triangles)
     {
-        vec3 temp_pos;
-        if(triangle::rayTriangleIntersection(r, t, ray_t, temp_pos))
+        hit_record temp_rec;
+        if(t.hit(r, ray_t, temp_rec))
         {
-            hits.emplace_back(temp_pos);
+            hits.emplace_back(temp_rec);
         }
     }
 
@@ -203,18 +145,17 @@ bool mesh::hit(const ray& r, interval ray_t, hit_record& rec) const
     int max_index = 0;
     for(int i = 0; i < hits.size(); i++)
     {
-        if(hits[i].length() > hits[max_index].length())
+        if(hits[i].p.length() > hits[max_index].p.length())
         {
             max_index = i;
         }
     }
 
-    rec.p = hits[max_index];
+    rec.p = hits[max_index].p;
     rec.mat_ptr = mat_ptr;
 
     return true;
 }
-
 
 
 void mesh::printObjModel() {

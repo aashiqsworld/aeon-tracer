@@ -66,7 +66,6 @@ THE SOFTWARE.
 
 namespace tinyobj {
 
-// TODO(syoyo): Better C++11 detection for older compiler
 #if __cplusplus > 199711L
 #define TINYOBJ_OVERRIDE override
 #else
@@ -755,7 +754,7 @@ struct PrimGroup {
     return faceGroup.empty() && lineGroup.empty() && pointsGroup.empty();
   }
 
-  // TODO(syoyo): bspline, surface, ...
+
 };
 
 // See
@@ -1246,7 +1245,6 @@ static vertex_index_t parseRawTriple(const char **token) {
 
 bool ParseTextureNameAndOption(std::string *texname, texture_option_t *texopt,
                                const char *linebuf) {
-  // @todo { write more robust lexer and parser. }
   bool found_texname = false;
   std::string texture_name;
 
@@ -1286,7 +1284,6 @@ bool ParseTextureNameAndOption(std::string *texname, texture_option_t *texopt,
       texopt->type = parseTextureType((&token), TEXTURE_TYPE_NONE);
     } else if ((0 == strncmp(token, "-texres", 7)) && IS_SPACE((token[7]))) {
       token += 7;
-      // TODO(syoyo): Check if arg is int type.
       texopt->texture_resolution = parseInt(&token);
     } else if ((0 == strncmp(token, "-imfchan", 8)) && IS_SPACE((token[8]))) {
       token += 9;
@@ -1313,7 +1310,6 @@ bool ParseTextureNameAndOption(std::string *texname, texture_option_t *texopt,
       token += strspn(token, " \t");  // skip space
 #else
       // Read filename until line end to parse filename containing whitespace
-      // TODO(syoyo): Support parsing texture option flag after the filename.
       texture_name = std::string(token);
       token += texture_name.length();
 #endif
@@ -1457,7 +1453,6 @@ inline TinyObjPoint WorldToLocal(const TinyObjPoint& a,
 }
 
 
-// TODO(syoyo): refactor function.
 static bool exportGroupsToShape(shape_t *shape, const PrimGroup &prim_group,
                                 const std::vector<tag_t> &tags,
                                 const int material_id, const std::string &name,
@@ -1523,7 +1518,6 @@ static bool exportGroupsToShape(shape_t *shape, const PrimGroup &prim_group,
           // There are two candidates to split the quad into two triangles.
           //
           // Choose the shortest edge.
-          // TODO: Is it better to determine the edge to split by calculating
           // the area of each triangle?
           //
           // +---+
@@ -2113,7 +2107,6 @@ void LoadMtl(std::map<std::string, int> *material_map,
       token += 7;
       {
         std::string namebuf = parseString(&token);
-        // TODO: empty name check?
         if (namebuf.empty()) {
           if (warning) {
             (*warning) += "empty material name in `newmtl`\n";
@@ -2669,7 +2662,6 @@ bool LoadObj(attrib_t *attrib, std::vector<shape_t> *shapes,
       // example:
       // vw 0 0 0.25 1 0.25 2 0.5
 
-      // TODO(syoyo): Add syntax check
       int vid = 0;
       vid = parseInt(&token);
 
@@ -2680,7 +2672,6 @@ bool LoadObj(attrib_t *attrib, std::vector<shape_t> *shapes,
       while (!IS_NEW_LINE(token[0])) {
         real_t j, w;
         // joint_id should not be negative, weight may be negative
-        // TODO(syoyo): # of elements check
         parseReal2(&j, &w, &token, -1.0);
 
         if (j < static_cast<real_t>(0)) {
@@ -2964,7 +2955,6 @@ bool LoadObj(attrib_t *attrib, std::vector<shape_t> *shapes,
       prim_group.clear();
       shape = shape_t();
 
-      // @todo { multiple object name? }
       token += 2;
       std::stringstream ss;
       ss << token;
@@ -3348,7 +3338,6 @@ bool LoadObjWithCallback(std::istream &inStream, const callback_t &callback,
 
     // object name
     if (token[0] == 'o' && IS_SPACE((token[1]))) {
-      // @todo { multiple object name? }
       token += 2;
 
       std::stringstream ss;
@@ -3362,7 +3351,7 @@ bool LoadObjWithCallback(std::istream &inStream, const callback_t &callback,
       continue;
     }
 
-#if 0  // @todo
+#if 0  //
     if (token[0] == 't' && IS_SPACE(token[1])) {
       tag_t tag;
 

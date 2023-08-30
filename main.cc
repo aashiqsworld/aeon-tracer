@@ -87,12 +87,17 @@ int main() {
     // test stuff START
     shared_ptr<material> mat;
      // diffuse
-    auto albedo = color::random() * color::random();
+    auto albedo = vec3(0.3, 0.9, 0.4);
     mat = make_shared<lambertian>(albedo);
-    auto m = make_shared<mesh>(mat);
+    auto m = make_shared<triangle>();
+    m->mat_ptr = mat;
+    vec3 v1 = vec3(0.0, 0.0, 0.0);
+    vec3 v2 = vec3(0.0, 1.0, 0.0);
+    vec3 v3 = vec3(1.0, 0.0, 1.0);
+    m->setVertices(v1, v2, v3);
 
 
-    m->loadObjModel("cube.obj");
+//    m->loadObjModel("cube.obj");
 //    m.printObjModel();
 
 
@@ -118,17 +123,12 @@ int main() {
     for (int i = 0; i < bitmap_size; i++) bitmap[i] = 0;
 
 
-
-
 	// World
 //	auto world = random_scene();
 	hittable_list world;
     world.add(m);
 
-
-
     // Camera
-
 	point3 lookfrom(13,2,3);
 	point3 lookat(0,0,0);
 	vec3 vup(0,1,0);

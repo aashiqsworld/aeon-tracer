@@ -131,6 +131,7 @@ bool mesh::hit(const ray& r, interval ray_t, hit_record& rec) const
     for(auto & t : triangles)
     {
         hit_record temp_rec;
+        temp_rec.mat_ptr = rec.mat_ptr;
         if(t.hit(r, ray_t, temp_rec))
         {
             hits.emplace_back(temp_rec);
@@ -152,8 +153,6 @@ bool mesh::hit(const ray& r, interval ray_t, hit_record& rec) const
     }
 
     rec.p = hits[max_index].p;
-    rec.mat_ptr = mat_ptr;
-
     return true;
 }
 

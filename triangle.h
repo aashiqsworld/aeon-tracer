@@ -25,6 +25,7 @@ public:
 public:
     vec3 vertices[3];
     vec3 normal; // normal vector
+    shared_ptr<material> mat_ptr; // used for testing
 };
 
 bool triangle::hit(const ray& r, interval ray_t, hit_record& rec) const
@@ -62,6 +63,7 @@ bool triangle::hit(const ray& r, interval ray_t, hit_record& rec) const
     if(t > EPSILON)
     {
         rec.p = r.origin() + r.direction() * t;
+        rec.mat_ptr = mat_ptr;
         return true;
     }
     else // This means there is a line intersection but not a ray intersection

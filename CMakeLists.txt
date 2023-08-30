@@ -20,4 +20,5 @@ add_executable(cpu_ray_tracer
         mesh.h
         int3.h
         bitmap.h
-        tiny_obj_loader.h)
+        tiny_obj_loader.h
+        triangle.h)

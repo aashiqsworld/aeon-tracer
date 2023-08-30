@@ -16,4 +16,8 @@ add_executable(cpu_ray_tracer
         ray.h
         sphere.h
         vec3.h
-        interval.h)
+        interval.h
+        mesh.h
+        int3.h
+        bitmap.h
+        tiny_obj_loader.h)

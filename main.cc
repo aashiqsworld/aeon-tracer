@@ -6,6 +6,7 @@
 #include "hittable_list.h"
 #include "material.h"
 #include "sphere.h"
+#include "mesh.h"
 
 #include <iostream>
 color ray_color(const ray& r, const hittable& world, int depth)
@@ -83,6 +84,24 @@ int round4(int x)
 // renders a ray in the scene
 int main() {
 
+    // test stuff START
+    shared_ptr<material> mat;
+     // diffuse
+    auto albedo = color::random() * color::random();
+    mat = make_shared<lambertian>(albedo);
+    auto m = make_shared<mesh>(mat);
+
+
+    m->loadObjModel("cube.obj");
+//    m.printObjModel();
+
+
+
+
+//    exit(0);
+
+
+    // test stuff END
 
 	// Image
     const char *filename = "image.bmp";
@@ -102,9 +121,13 @@ int main() {
 
 
 	// World
-	auto world = random_scene();
+//	auto world = random_scene();
+	hittable_list world;
+    world.add(m);
 
-	// Camera
+
+
+    // Camera
 
 	point3 lookfrom(13,2,3);
 	point3 lookat(0,0,0);

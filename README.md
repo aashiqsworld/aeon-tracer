@@ -7,7 +7,9 @@ A CPU ray tracer, written in C++. I am writing this to validate my fundamentals 
 
 
 Current features:
+- ray traced meshes (triangular)
 - ray traced spheres
+- bitmap support
 - materials (diffused, metal, dielectric)
 - reflection/refraction
 - physically-based camera

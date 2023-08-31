@@ -92,7 +92,7 @@ int main() {
     auto albedo = vec3(0.3, 0.9, 0.4);
     mat = make_shared<lambertian>(albedo);
     auto m = make_shared<mesh>(mat);
-    m->loadObjModel("cube.obj");
+    m->loadObjModel("stanford-bunny.obj");
     m->printObjModel();
 //    m->loadObjModelAlt("humanoid.obj");
 //    auto m = make_shared<triangle>();
@@ -116,7 +116,7 @@ int main() {
 	const auto aspect_ratio = 3.0 / 2.0;
 	const int image_width = 600;
 	const int image_height = static_cast<int>(image_width / aspect_ratio);
-	const int samples_per_pixel = 10;
+	const int samples_per_pixel = 1;
 	const int max_depth = 50;
 
     // bmp vars

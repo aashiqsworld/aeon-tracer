@@ -67,8 +67,8 @@ bool mesh::loadObjModel(char *filename) {
             if(lineType == "v")
             {
                 auto tempVertex = vec3();
-                iss >> tempVertex[0] >> yf >> zf;
-                vertices.emplace_back(xf, yf, zf);
+                iss >> tempVertex[0] >> tempVertex[1] >> tempVertex[2];
+                vertices.emplace_back(tempVertex[0], tempVertex[1], tempVertex[2]);
             }
             else if(lineType == "vn")
             {
@@ -214,6 +214,8 @@ bool mesh::hit(const ray& r, interval ray_t, hit_record& rec) const
         temp_rec.mat_ptr = rec.mat_ptr;
         if(t.hit(r, ray_t, temp_rec))
         {
+            rec.p = temp_rec.p;
+            rec.mat_ptr = mat_ptr;
             hits.emplace_back(temp_rec);
         }
     }
@@ -240,26 +242,26 @@ bool mesh::hit(const ray& r, interval ray_t, hit_record& rec) const
 
 
 void mesh::printObjModel() {
-//    for(const auto & v : vertices) // print vertices
-//    {
-//        cout << fixed << setprecision(1) << "v  " <<
-//             v.x() << "  " <<
-//             v.y() << "  " <<
-//             v.z() << "  " << endl;
-//    }
-//    cout << endl;
-//    for(const auto & vn : vertexNormals) //print vertex normals
-//    {
-//        cout << fixed << setprecision(1) << "vn  " <<
-//             vn.x() << "  " <<
-//             vn.y() << "  " <<
-//             vn.z() << "  " << endl;
-//    }
-//    cout << endl;
-    for(const auto & f : triangles) // print face data
+    for(const auto & v : vertices) // print vertices
     {
-        cout << f << endl;
+        cout << fixed << setprecision(1) << "v  " <<
+             v.x() << "  " <<
+             v.y() << "  " <<
+             v.z() << "  " << endl;
     }
+    cout << endl;
+    for(const auto & vn : vertexNormals) //print vertex normals
+    {
+        cout << fixed << setprecision(1) << "vn  " <<
+             vn.x() << "  " <<
+             vn.y() << "  " <<
+             vn.z() << "  " << endl;
+    }
+    cout << endl;
+//    for(const auto & f : triangles) // print face data
+//    {
+//        cout << f << endl;
+//    }
 }
 
 #endif

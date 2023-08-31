@@ -116,7 +116,7 @@ int main() {
 	const auto aspect_ratio = 3.0 / 2.0;
 	const int image_width = 600;
 	const int image_height = static_cast<int>(image_width / aspect_ratio);
-	const int samples_per_pixel = 2;
+	const int samples_per_pixel = 10;
 	const int max_depth = 50;
 
     // bmp vars
@@ -134,7 +134,7 @@ int main() {
     world.add(m);
 
     // Camera
-	point3 lookfrom(5,2,2);
+	point3 lookfrom(5,2,3);
 	point3 lookat(0,0,0);
 	vec3 vup(0,1,0);
 	auto dist_to_focus = 6.0;

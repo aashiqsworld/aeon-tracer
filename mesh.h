@@ -82,7 +82,6 @@ bool mesh::loadObjModel(char *filename) {
                 string faceValues[3];
                 iss >> faceValues[0] >> faceValues[1] >> faceValues[2];
 
-
                 // iterate through face line
                 for(int j=0;j<3;j++)
                 {
@@ -118,13 +117,25 @@ bool mesh::loadObjModel(char *filename) {
         int c = 0;
         for(int i = 0; i < vertexIndices.size(); i++)
         {
-            auto t = triangle(vertices[vertexIndices[i].x()], vertices[vertexIndices[i].y()], vertices[vertexIndices[i].z()]);
+            auto t = triangle(vertices[vertexIndices[i].x()-1], vertices[vertexIndices[i].y()-1], vertices[vertexIndices[i].z()-1]);
             if(!vertexNormals.empty())
-                t.setNormal(vertexNormals[normalIndices[i]]);
+                t.setNormal(vertexNormals[normalIndices[i]-1]);
             triangles.emplace_back(t);
         }
     }
     else cout << "Unable to open file.";
+
+    /*
+    for(int i = 0; i < vertexIndices.size(); i++)
+    {
+        cout << "f  ";
+        for(int j = 0; j < 3; j ++)
+        {
+            cout << vertexIndices[i][j] << "//" << normalIndices[i] << "  ";
+        }
+        cout << endl;
+    }*/
+
     return true;
 }
 
@@ -204,7 +215,6 @@ bool mesh::loadObjModelAlt(char* filename)
     return true;
 }
 
-
 bool mesh::hit(const ray& r, interval ray_t, hit_record& rec) const
 {
     vector<hit_record> hits;
@@ -214,8 +224,9 @@ bool mesh::hit(const ray& r, interval ray_t, hit_record& rec) const
         temp_rec.mat_ptr = rec.mat_ptr;
         if(t.hit(r, ray_t, temp_rec))
         {
-            rec.p = temp_rec.p;
-            rec.mat_ptr = mat_ptr;
+//            rec.p = temp_rec.p;
+//            rec.mat_ptr = mat_ptr;
+//            return true;
             hits.emplace_back(temp_rec);
         }
     }
@@ -242,26 +253,30 @@ bool mesh::hit(const ray& r, interval ray_t, hit_record& rec) const
 
 
 void mesh::printObjModel() {
-    for(const auto & v : vertices) // print vertices
-    {
-        cout << fixed << setprecision(1) << "v  " <<
-             v.x() << "  " <<
-             v.y() << "  " <<
-             v.z() << "  " << endl;
-    }
-    cout << endl;
-    for(const auto & vn : vertexNormals) //print vertex normals
-    {
-        cout << fixed << setprecision(1) << "vn  " <<
-             vn.x() << "  " <<
-             vn.y() << "  " <<
-             vn.z() << "  " << endl;
-    }
-    cout << endl;
-//    for(const auto & f : triangles) // print face data
+
+//    for(const auto & v : vertices) // print vertices
 //    {
-//        cout << f << endl;
+//        cout << fixed << setprecision(1) << "v  " <<
+//             v.x() << "  " <<
+//             v.y() << "  " <<
+//             v.z() << "  " << endl;
 //    }
+//    cout << endl;
+//    for(const auto & vn : vertexNormals) //print vertex normals
+//    {
+//        cout << fixed << setprecision(1) << "vn  " <<
+//             vn.x() << "  " <<
+//             vn.y() << "  " <<
+//             vn.z() << "  " << endl;
+//    }
+//    cout << endl;
+
+    int c = 0;
+    for(const auto & f : triangles) // print face data
+    {
+        cout << c << " " << f << endl;
+        c++;
+    }
 }
 
 #endif

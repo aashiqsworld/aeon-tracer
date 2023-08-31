@@ -64,6 +64,7 @@ bool triangle::hit(const ray& r, interval ray_t, hit_record& rec) const
     {
         rec.p = r.origin() + r.direction() * t;
         rec.mat_ptr = mat_ptr;
+        rec.set_face_normal(r, normal);
         return true;
     }
     else // This means there is a line intersection but not a ray intersection
@@ -73,7 +74,7 @@ bool triangle::hit(const ray& r, interval ray_t, hit_record& rec) const
 inline std::ostream& operator<<(std::ostream &out, const triangle &t)
 {
     return out << "Triangle: " << endl <<
-    "v1: (" << t.vertices[0] << ")  (" << t.vertices[1] << ")  (" << t.vertices[2] << ")" <<
+    "v1: (" << t.vertices[0] << ")  (" << t.vertices[1] << ")  (" << t.vertices[2] << ")" << endl <<
     "normal: (" << t.normal << ")";
 
 }

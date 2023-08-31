@@ -89,19 +89,20 @@ int main() {
      // diffuse
     auto albedo = vec3(0.3, 0.9, 0.4);
     mat = make_shared<lambertian>(albedo);
-    auto m = make_shared<triangle>();
-    m->mat_ptr = mat;
-    vec3 v1 = vec3(0.0, 0.0, 0.0);
-    vec3 v2 = vec3(0.0, 1.0, 0.0);
-    vec3 v3 = vec3(1.0, 0.0, 1.0);
-    m->setVertices(v1, v2, v3);
+    auto m = make_shared<mesh>(mat);
+    m->loadObjModel("cube.obj");
+    m->printObjModel();
+//    m->loadObjModelAlt("humanoid.obj");
+//    auto m = make_shared<triangle>();
+//    m->mat_ptr = mat;
+//    vec3 v1 = vec3(0.0, 0.0, 0.0);
+//    vec3 v2 = vec3(0.0, 1.0, 0.0);
+//    vec3 v3 = vec3(1.0, 0.0, 1.0);
+//    m->setVertices(v1, v2, v3);
 
 
 //    m->loadObjModel("cube.obj");
 //    m.printObjModel();
-
-
-
 
 //    exit(0);
 
@@ -113,7 +114,7 @@ int main() {
 	const auto aspect_ratio = 3.0 / 2.0;
 	const int image_width = 600;
 	const int image_height = static_cast<int>(image_width / aspect_ratio);
-	const int samples_per_pixel = 6;
+	const int samples_per_pixel = 1;
 	const int max_depth = 50;
 
     // bmp vars

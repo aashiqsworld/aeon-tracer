@@ -172,6 +172,13 @@ bool mesh::loadObjModelAlt(char* filename)
                      "P(" << curMesh.Vertices[j].Position.X << ", " << curMesh.Vertices[j].Position.Y << ", " << curMesh.Vertices[j].Position.Z << ") " <<
                      "N(" << curMesh.Vertices[j].Normal.X << ", " << curMesh.Vertices[j].Normal.Y << ", " << curMesh.Vertices[j].Normal.Z << ") " <<
                      "TC(" << curMesh.Vertices[j].TextureCoordinate.X << ", " << curMesh.Vertices[j].TextureCoordinate.Y << ")\n";
+
+                vertices.emplace_back(curMesh.Vertices[j].Position.X, curMesh.Vertices[j]
+                .Position.Y, curMesh.Vertices[j].Position.Z);
+                vertexNormals.emplace_back(curMesh.Vertices[j].Normal.X, curMesh.Vertices[j]
+                .Normal.Y, curMesh.Vertices[j].Normal.Z);
+
+
             }
 
             // Print Indices
@@ -182,6 +189,11 @@ bool mesh::loadObjModelAlt(char* filename)
             for (int j = 0; j < curMesh.Indices.size(); j += 3)
             {
                 file << "T" << j / 3 << ": " << curMesh.Indices[j] << ", " << curMesh.Indices[j + 1] << ", " << curMesh.Indices[j + 2] << "\n";
+                auto t = triangle(vertices[curMesh.Indices[j]], vertices[curMesh
+                .Indices[j+1]], vertices[curMesh.Indices[j+2]]);
+                t.setNormal(vertexNormals[curMesh.Indices[j]]);
+                triangles.emplace_back(t);
+
             }
 
             // Print Material

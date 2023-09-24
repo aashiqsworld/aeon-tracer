@@ -92,9 +92,9 @@ int main() {
     auto albedo = vec3(0.3, 0.9, 0.4);
     mat = make_shared<lambertian>(albedo);
     auto m = make_shared<mesh>(mat);
-    m->loadObjModel("stanford-bunny.obj");
-    m->printObjModel();
-//    m->loadObjModelAlt("humanoid.obj");
+    m->loadObjModelAlt("teddy.obj");
+//    m->printObjModel();
+//    m->loadObjModel("teapot.obj");
 //    auto m = make_shared<triangle>();
 //    m->mat_ptr = mat;
 //    vec3 v1 = vec3(0.0, 0.0, 0.0);
@@ -114,7 +114,7 @@ int main() {
 	// Image
     const char *filename = "image.bmp";
 	const auto aspect_ratio = 3.0 / 2.0;
-	const int image_width = 600;
+	const int image_width = 300;
 	const int image_height = static_cast<int>(image_width / aspect_ratio);
 	const int samples_per_pixel = 1;
 	const int max_depth = 50;
@@ -134,7 +134,7 @@ int main() {
     world.add(m);
 
     // Camera
-	point3 lookfrom(5,2,3);
+	point3 lookfrom(10,5,3);
 	point3 lookat(0,0,0);
 	vec3 vup(0,1,0);
 	auto dist_to_focus = 6.0;
@@ -145,7 +145,9 @@ int main() {
 
 
 	// Render
-//	std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+    std::ofstream out("image.ppm");
+
+	out << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
 	for (int j = image_height-1; j >= 0; --j)
 	{
@@ -160,25 +162,31 @@ int main() {
 				ray r = cam.get_ray(u, v);
 				pixel_color += ray_color(r, world, max_depth);
 			}
+            pixel_color /= samples_per_pixel;
 //			write_color(std::cout, pixel_color, samples_per_pixel);
             int index = j * padded_width + i * 3;
-            bitmap[index  ] = pixel_color.r_char(samples_per_pixel);
-            bitmap[index+1] = pixel_color.g_char(samples_per_pixel);
-            bitmap[index+2] = pixel_color.b_char(samples_per_pixel);
+
+            out << static_cast<int>(pixel_color.x() * 255.999) << ' ' <<
+                   static_cast<int>(pixel_color.y() * 255.999) << ' ' <<
+                   static_cast<int>(pixel_color.z() * 255.999) << '\n';
+
+//            bitmap[index  ] = pixel_color.r_char(samples_per_pixel);
+//            bitmap[index+1] = pixel_color.g_char(samples_per_pixel);
+//            bitmap[index+2] = pixel_color.b_char(samples_per_pixel);
 		}
 	}
 
-    char tag[] = { 'B', 'M' };
-    int header[] = {
-            0, 0, 0x36, 0x28, image_width, image_height, 0x180001,
-            0, 0, 0x002e23, 0x002e23, 0, 0
-    };
-    header[0] = sizeof(tag) + sizeof(header) + bitmap_size;
-    FILE *fp = fopen(filename, "w+");
-    fwrite(&tag, sizeof(tag), 1, fp);
-    fwrite(&header, sizeof(header), 1, fp);
-    fwrite(bitmap, bitmap_size * sizeof(char), 1, fp);
-    fclose(fp);
+//    char tag[] = { 'B', 'M' };
+//    int header[] = {
+//            0, 0, 0x36, 0x28, image_width, image_height, 0x180001,
+//            0, 0, 0x002e23, 0x002e23, 0, 0
+//    };
+//    header[0] = sizeof(tag) + sizeof(header) + bitmap_size;
+//    FILE *fp = fopen(filename, "w+");
+//    fwrite(&tag, sizeof(tag), 1, fp);
+//    fwrite(&header, sizeof(header), 1, fp);
+//    fwrite(bitmap, bitmap_size * sizeof(char), 1, fp);
+//    fclose(fp);
     free(bitmap);
 
 	std::cerr << "\nDone.\n";

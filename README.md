@@ -1,10 +1,10 @@
 # Aeon Tracer
 
-![ray traced scene](image3.png)
+![ray traced scene](readme-assets/image3.png)
 
 A C++ Ray Tracer.
 
-![ray traced cube](renderCube.png)
+![ray traced cube](readme-assets/renderCube.png)
 
 Current features:
 - ray traced meshes (triangular)

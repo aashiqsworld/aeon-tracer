@@ -1,25 +1,26 @@
 cmake_minimum_required(VERSION 3.26)
-project(cpu_ray_tracer)
+project(aeon-tracer)
 
 set(CMAKE_CXX_STANDARD 14)
 
 include_directories(.)
 
-add_executable(cpu_ray_tracer
-        camera.h
-        color.h
-        common.h
-        hittable.h
-        hittable_list.h
-        main.cc
-        material.h
-        ray.h
-        sphere.h
-        vec3.h
-        interval.h
-        mesh.h
-        int3.h
-        bitmap.h
-        OBJ_Loader.h
-        triangle.h
-        moving_sphere.h)
+add_executable(aeon-tracer
+        src/bitmap.h
+        src/camera.h
+        src/color.h
+        src/common.h
+        src/hittable.h
+        src/hittable_list.h
+        src/int3.h
+        src/interval.h
+        src/main.cc
+        src/material.h
+        src/mesh.h
+        src/moving_sphere.h
+        src/OBJ_Loader.h
+        src/ray.h
+        src/sphere.h
+        src/triangle.h
+        src/vec3.h
+        src/aabb.h)

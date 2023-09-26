@@ -39,7 +39,6 @@ struct pixel
     inline static pixel blue() { return {0, 0, 255}; }
     inline static pixel green() { return {0, 255, 0}; }
 
-
 };
 
 class bitmap {

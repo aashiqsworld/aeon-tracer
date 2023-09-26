@@ -23,6 +23,15 @@ public:
         return min < x && x < max;
     }
 
+    double size() const {
+        return max - min;
+    }
+
+    interval expand(double delta) const {
+        auto padding = delta/2;
+        return {min - padding, max + padding};
+    }
+
     static const interval empty, universe;
 };
 

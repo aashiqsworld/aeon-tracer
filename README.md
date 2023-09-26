@@ -1,6 +1,6 @@
 # Aeon Tracer
 
-![ray traced scene](renderSpheres.png)
+![ray traced scene](image3.png)
 
 A C++ Ray Tracer.
 

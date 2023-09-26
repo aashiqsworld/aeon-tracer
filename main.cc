@@ -1,5 +1,5 @@
 #include "common.h"
-
+#include <time.h>
 #include "camera.h"
 #include "color.h"
 #include "hittable.h"
@@ -7,6 +7,7 @@
 #include "material.h"
 #include "sphere.h"
 #include "mesh.h"
+#include "moving_sphere.h"
 
 #include <iostream>
 color ray_color(const ray& r, const hittable& world, int depth)
@@ -76,6 +77,54 @@ hittable_list random_scene() {
     return world;
 }
 
+hittable_list random_scene_moving() {
+    hittable_list world;
+
+    auto ground_material = make_shared<lambertian>(color(0.5, 0.5, 0.5));
+    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, ground_material));
+
+    for (int a = -11; a < 11; a++) {
+        for (int b = -11; b < 11; b++) {
+            auto choose_mat = random_double();
+            point3 center(a + 0.9*random_double(), 0.2, b + 0.9*random_double());
+
+            if ((center - vec3(4, 0.2, 0)).length() > 0.9) {
+                shared_ptr<material> sphere_material;
+
+                if (choose_mat < 0.8) {
+                    // diffuse
+                    auto albedo = color::random() * color::random();
+                    sphere_material = make_shared<lambertian>(albedo);
+                    auto center2 = center + vec3(0, random_double(0,.5), 0);
+                    world.add(make_shared<moving_sphere>(
+                            center, center2, 0.0, 1.0, 0.2, sphere_material));
+                } else if (choose_mat < 0.95) {
+                    // metal
+                    auto albedo = color::random(0.5, 1);
+                    auto fuzz = random_double(0, 0.5);
+                    sphere_material = make_shared<metal>(albedo, fuzz);
+                    world.add(make_shared<sphere>(center, 0.2, sphere_material));
+                } else {
+                    // glass
+                    sphere_material = make_shared<dielectric>(1.5);
+                    world.add(make_shared<sphere>(center, 0.2, sphere_material));
+                }
+            }
+        }
+    }
+
+    auto material1 = make_shared<dielectric>(1.5);
+    world.add(make_shared<sphere>(point3(0, 1, 0), 1.0, material1));
+
+    auto material2 = make_shared<lambertian>(color(0.4, 0.2, 0.1));
+    world.add(make_shared<sphere>(point3(-4, 1, 0), 1.0, material2));
+
+    auto material3 = make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
+    world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
+
+    return world;
+}
+
 int round4(int x)
 {
     return x % 4 == 0 ? x : x - x % 4 + 4;
@@ -92,7 +141,7 @@ int main() {
     auto albedo = vec3(0.3, 0.9, 0.4);
     mat = make_shared<lambertian>(albedo);
     auto m = make_shared<mesh>(mat);
-    m->loadObjModelAlt("teddy.obj");
+//    m->loadObjModelAlt("teddy.obj");
 //    m->printObjModel();
 //    m->loadObjModel("teapot.obj");
 //    auto m = make_shared<triangle>();
@@ -113,22 +162,15 @@ int main() {
 
 	// Image
     const char *filename = "image.bmp";
-	const auto aspect_ratio = 3.0 / 2.0;
+	const auto aspect_ratio = 16.0 / 9.0;
 	const int image_width = 300;
 	const int image_height = static_cast<int>(image_width / aspect_ratio);
 	const int samples_per_pixel = 1;
 	const int max_depth = 50;
 
-    // bmp vars
-    int padded_width = round4(image_width * 3);
-    int bitmap_size = image_height * padded_width * 3;
-    char *bitmap = (char *) malloc(bitmap_size * sizeof(char));
-    for (int i = 0; i < bitmap_size; i++) bitmap[i] = 0;
-
-
 	// World
-//	auto world = random_scene();
-	hittable_list world;
+	auto world = random_scene_moving();
+//	hittable_list world;
     auto ground_material = make_shared<lambertian>(color(0.5, 0.5, 0.5));
     world.add(make_shared<sphere>(point3(0,-1000,0), 1000, ground_material));
     world.add(m);
@@ -140,18 +182,22 @@ int main() {
 	auto dist_to_focus = 6.0;
 	auto aperture = 0.1;
 
-	camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
-
-
+	camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
 
 	// Render
+    time_t start = time(0);
+    char time_str[] = "Calculating";
+    double estimated_time = 0.0;
     std::ofstream out("image.ppm");
 
 	out << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
 	for (int j = image_height-1; j >= 0; --j)
 	{
-		std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
+        double minutes_remaining = estimated_time * j / 60.0;
+
+		std::clog << "\rEstimated time remaining: " << minutes_remaining << " minutes\t\t" <<
+        std::flush;
 		for (int i = 0; i < image_width; ++i)
 		{
 			color pixel_color(0, 0, 0);
@@ -164,31 +210,14 @@ int main() {
 			}
             pixel_color /= samples_per_pixel;
 //			write_color(std::cout, pixel_color, samples_per_pixel);
-            int index = j * padded_width + i * 3;
 
             out << static_cast<int>(pixel_color.x() * 255.999) << ' ' <<
                    static_cast<int>(pixel_color.y() * 255.999) << ' ' <<
                    static_cast<int>(pixel_color.z() * 255.999) << '\n';
-
-//            bitmap[index  ] = pixel_color.r_char(samples_per_pixel);
-//            bitmap[index+1] = pixel_color.g_char(samples_per_pixel);
-//            bitmap[index+2] = pixel_color.b_char(samples_per_pixel);
 		}
+        estimated_time = difftime(time(0), start);
+        start = time(0);
 	}
-
-//    char tag[] = { 'B', 'M' };
-//    int header[] = {
-//            0, 0, 0x36, 0x28, image_width, image_height, 0x180001,
-//            0, 0, 0x002e23, 0x002e23, 0, 0
-//    };
-//    header[0] = sizeof(tag) + sizeof(header) + bitmap_size;
-//    FILE *fp = fopen(filename, "w+");
-//    fwrite(&tag, sizeof(tag), 1, fp);
-//    fwrite(&header, sizeof(header), 1, fp);
-//    fwrite(bitmap, bitmap_size * sizeof(char), 1, fp);
-//    fclose(fp);
-    free(bitmap);
-
-	std::cerr << "\nDone.\n";
+	std::clog << "\nDone.\n";
 }
 

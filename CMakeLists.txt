@@ -21,4 +21,5 @@ add_executable(cpu_ray_tracer
         int3.h
         bitmap.h
         OBJ_Loader.h
-        triangle.h)
+        triangle.h
+        moving_sphere.h)

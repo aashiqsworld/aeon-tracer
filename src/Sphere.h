@@ -1,25 +1,30 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
-#include "hittable.h"
+#include "Hittable.h"
 #include "vec3.h"
 
-class sphere : public hittable
+class Sphere : public Hittable
 {
 	public:
-		sphere() {}
-		sphere(point3 cen, double r, shared_ptr<material> m)
-			: center(cen), radius(r), mat_ptr(m) {};
+		Sphere() {}
+		Sphere(point3 cen, double r, shared_ptr<Material> m)
+			: center(cen), radius(r), mat_ptr(m) {
+            auto rvec = vec3(radius, radius, radius);
+            bbox = AABB(center - rvec, center + rvec);
+        };
 
-		virtual bool hit(const ray& r, interval ray_t, hit_record& rec) const override;
+        AABB bounding_box() const override { return bbox; }
+		virtual bool hit(const Ray& r, Interval ray_t, hit_record& rec) const override;
 
 	public:
 		point3 center;
 		double radius;
-		shared_ptr<material> mat_ptr;
+		shared_ptr<Material> mat_ptr;
+        AABB bbox;
 };
 
-bool sphere::hit(const ray& r, interval ray_t, hit_record& rec) const
+bool Sphere::hit(const Ray& r, Interval ray_t, hit_record& rec) const
 {
 	vec3 oc = r.origin() - center;
 	auto a = r.direction().length_squared();

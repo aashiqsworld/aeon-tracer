@@ -5,30 +5,34 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
-#include "hittable.h"
+#include "Hittable.h"
 #include "vec3.h"
 
 using namespace std;
 
-class triangle : public hittable
+class Triangle : public Hittable
 {
 public:
-    triangle() = default;
-    triangle(vec3 v1, vec3 v2, vec3 v3) : vertices{v1, v2, v3} {}
+    Triangle() = default;
+    Triangle(vec3 v1, vec3 v2, vec3 v3) : vertices{v1, v2, v3} {}
     void setVertices(vec3 v1, vec3 v2, vec3 v3) {
         vertices[0] = v1;
         vertices[1] = v2;
         vertices[2] = v3;
     }
     void setNormal(vec3 n) { normal = n; }
-    virtual bool hit(const ray& r, interval ray_t, hit_record& rec) const override;
+    virtual bool hit(const Ray& r, Interval ray_t, hit_record& rec) const override;
+    virtual AABB bounding_box() const override;
+
 public:
     vec3 vertices[3];
     vec3 normal; // normal vector
-    shared_ptr<material> mat_ptr; // used for testing
+    shared_ptr<Material> mat_ptr; // used for testing
+private:
+    AABB bbox;
 };
 
-bool triangle::hit(const ray& r, interval ray_t, hit_record& rec) const
+bool Triangle::hit(const Ray& r, Interval ray_t, hit_record& rec) const
 {
     vec3 vertex0 = vertices[0];
     vec3 vertex1 = vertices[1];
@@ -71,7 +75,12 @@ bool triangle::hit(const ray& r, interval ray_t, hit_record& rec) const
         return false;
 }
 
-inline std::ostream& operator<<(std::ostream &out, const triangle &t)
+AABB Triangle::bounding_box() const
+{
+    return bbox;
+}
+
+inline std::ostream& operator<<(std::ostream &out, const Triangle &t)
 {
     return out << "Triangle: " << endl <<
     "v1: (" << t.vertices[0] << ")  (" << t.vertices[1] << ")  (" << t.vertices[2] << ")" << endl <<

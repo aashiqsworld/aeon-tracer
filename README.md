@@ -1,17 +1,17 @@
 # Aeon Tracer
 
-![ray traced scene](readme-assets/image3.png)
+![Ray traced scene](readme-assets/image3.png)
 
 A C++ Ray Tracer.
 
-![ray traced cube](readme-assets/renderCube.png)
+![Ray traced cube](readme-assets/renderCube.png)
 
 Current features:
-- ray traced meshes (triangular)
-- ray traced spheres
+- Ray traced meshes (triangular)
+- Ray traced spheres
 - bitmap support
-- materials (diffused, metal, dielectric)
+- materials (diffused, Metal, Dielectric)
 - reflection/refraction
-- physically-based camera
+- physically-based Camera
 - ppm image output
 

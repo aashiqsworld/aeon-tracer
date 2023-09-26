@@ -7,20 +7,21 @@ include_directories(.)
 
 add_executable(aeon-tracer
         src/bitmap.h
-        src/camera.h
-        src/color.h
-        src/common.h
-        src/hittable.h
-        src/hittable_list.h
+        src/Camera.h
+        src/Color.h
+        src/Common.h
+        src/Hittable.h
+        src/HittableList.h
         src/int3.h
-        src/interval.h
+        src/Interval.h
         src/main.cc
-        src/material.h
-        src/mesh.h
-        src/moving_sphere.h
+        src/Material.h
+        src/Mesh.h
+        src/MovingSphere.h
         src/OBJ_Loader.h
-        src/ray.h
-        src/sphere.h
-        src/triangle.h
+        src/Ray.h
+        src/Sphere.h
+        src/Triangle.h
         src/vec3.h
-        src/aabb.h)
+        src/AABB.h
+        src/BVH.h)

@@ -10,42 +10,45 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include "hittable.h"
+#include "Hittable.h"
 #include "vec3.h"
 #include "int3.h"
-#include "common.h"
-#include "triangle.h"
+#include "Common.h"
+#include "Triangle.h"
 #include "OBJ_Loader.h"
 
 using namespace std;
 
 
 
-class mesh : public hittable
+class Mesh : public Hittable
 {
 public:
-    mesh() {}
-    mesh(shared_ptr<material> m) : mat_ptr(m) { }
+    Mesh() {}
+    Mesh(shared_ptr<Material> m) : mat_ptr(m) { }
 
 public:
     point3 pos;
     vector<vec3> vertices;
-    vector<triangle> triangles;
+    vector<Triangle> triangles;
     vector<vec3> vertexNormals;
     vector<int> faceNormals;
-    shared_ptr<material> mat_ptr;
+    shared_ptr<Material> mat_ptr;
 
 
     virtual bool loadObjModel(char* filename);
     virtual bool loadObjModelAlt(char* filename);
-    virtual bool hit(const ray& r, interval ray_t, hit_record& rec) const override;
+    virtual bool hit(const Ray& r, Interval ray_t, hit_record& rec) const override;
     virtual void printObjModel();
+    virtual AABB bounding_box() const override;
+
 
 
 private:
+    AABB bbox;
 };
 
-bool mesh::loadObjModel(char *filename) {
+bool Mesh::loadObjModel(char *filename) {
     string line;
     ifstream objFile (filename);
 
@@ -117,7 +120,7 @@ bool mesh::loadObjModel(char *filename) {
         int c = 0;
         for(int i = 0; i < vertexIndices.size(); i++)
         {
-            auto t = triangle(vertices[vertexIndices[i].x()-1], vertices[vertexIndices[i].y()-1], vertices[vertexIndices[i].z()-1]);
+            auto t = Triangle(vertices[vertexIndices[i].x() - 1], vertices[vertexIndices[i].y() - 1], vertices[vertexIndices[i].z() - 1]);
             if(!vertexNormals.empty())
                 t.setNormal(vertexNormals[normalIndices[i]-1]);
             triangles.emplace_back(t);
@@ -139,7 +142,7 @@ bool mesh::loadObjModel(char *filename) {
     return true;
 }
 
-bool mesh::loadObjModelAlt(char* filename)
+bool Mesh::loadObjModelAlt(char* filename)
 {
     cout << "Loading " << filename << endl;
 
@@ -189,7 +192,7 @@ bool mesh::loadObjModelAlt(char* filename)
             for (int j = 0; j < curMesh.Indices.size(); j += 3)
             {
                 file << "T" << j / 3 << ": " << curMesh.Indices[j] << ", " << curMesh.Indices[j + 1] << ", " << curMesh.Indices[j + 2] << "\n";
-                auto t = triangle(vertices[curMesh.Indices[j]], vertices[curMesh
+                auto t = Triangle(vertices[curMesh.Indices[j]], vertices[curMesh
                 .Indices[j+1]], vertices[curMesh.Indices[j+2]]);
                 t.setNormal(vertexNormals[curMesh.Indices[j]]);
                 triangles.emplace_back(t);
@@ -227,7 +230,7 @@ bool mesh::loadObjModelAlt(char* filename)
     return true;
 }
 
-bool mesh::hit(const ray& r, interval ray_t, hit_record& rec) const
+bool Mesh::hit(const Ray& r, Interval ray_t, hit_record& rec) const
 {
     vector<hit_record> hits;
     for(auto & t : triangles)
@@ -263,8 +266,13 @@ bool mesh::hit(const ray& r, interval ray_t, hit_record& rec) const
     return true;
 }
 
+AABB Mesh::bounding_box() const
+{
+    return bbox;
+}
 
-void mesh::printObjModel() {
+
+void Mesh::printObjModel() {
 
 //    for(const auto & v : vertices) // print vertices
 //    {

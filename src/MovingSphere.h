@@ -1,20 +1,27 @@
 #ifndef MOVING_SPHERE_H
 #define MOVING_SPHERE_H
 
-#include "common.h"
-#include "hittable.h"
+#include "Common.h"
+#include "Hittable.h"
 
-class moving_sphere : public hittable {
+class MovingSphere : public Hittable {
 public:
-    moving_sphere() {}
-    moving_sphere (
+    MovingSphere() {}
+    MovingSphere (
             point3 cen0, point3 cen1, double _time0, double _time1, double r,
-            shared_ptr<material> m)
+            shared_ptr<Material> m)
             : center0(cen0), center1(cen1), time0(_time0), time1(_time1), radius(r), mat_ptr(m)
-    {};
+    {
+        auto rvec = vec3(radius, radius, radius);
+        AABB box1(center0 - rvec, center0 + rvec);
+        AABB box2(center1 - rvec, center1 + rvec);
+        bbox = AABB(box1, box2);
+    };
 
     virtual bool hit(
-            const ray& r, interval ray_t, hit_record& rec) const override;
+            const Ray& r, Interval ray_t, hit_record& rec) const override;
+    virtual AABB bounding_box() const override;
+
 
     point3 center(double time) const;
 
@@ -22,14 +29,15 @@ public:
     point3 center0, center1;
     double time0, time1;
     double radius;
-    shared_ptr<material> mat_ptr;
+    shared_ptr<Material> mat_ptr;
+    AABB bbox;
 };
 
-point3 moving_sphere::center(double time) const {
+point3 MovingSphere::center(double time) const {
     return center0 + ((time - time0) / (time1 - time0)) * (center1 - center0);
 }
 
-bool moving_sphere::hit(const ray& r, interval ray_t, hit_record& rec) const {
+bool MovingSphere::hit(const Ray& r, Interval ray_t, hit_record& rec) const {
     vec3 oc = r.origin() - center(r.time());
     auto a = r.direction().length_squared();
     auto half_b = dot(oc, r.direction());
@@ -56,5 +64,10 @@ bool moving_sphere::hit(const ray& r, interval ray_t, hit_record& rec) const {
     return true;
 }
 
+AABB MovingSphere::bounding_box() const
+{
+    return bbox;
+
+}
 
 #endif

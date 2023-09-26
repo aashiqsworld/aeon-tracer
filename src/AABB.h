@@ -1,32 +1,39 @@
 #ifndef AABB_H
 #define AABB_H
 
-#include "common.h"
+#include "Common.h"
+#include "Interval.h"
 
-class aabb {
+class AABB {
 public:
-    interval x, y, z;
+    Interval x, y, z;
 
-    aabb() {} // default AABB is empty, since intervals are empty by default
+    AABB() {} // default AABB is empty, since intervals are empty by default
 
-    aabb(const interval& ix, const interval & iy, const interval& iz)
+    AABB(const Interval& ix, const Interval & iy, const Interval& iz)
     : x(ix), y(iy), z(iz) { }
 
-    aabb(const point3& a, const point3& b) {
+    AABB(const point3& a, const point3& b) {
         // Treat the two points a and b as extreme for the bounding box, so we don't require a
         // particular min/max coordinate order
-        x = interval(fmin(a[0],b[0]), fmax(a[0],b[0]));
-        x = interval(fmin(a[1],b[1]), fmax(a[1],b[1]));
-        x = interval(fmin(a[2],b[2]), fmax(a[2],b[2]));
+        x = Interval(fmin(a[0], b[0]), fmax(a[0], b[0]));
+        x = Interval(fmin(a[1], b[1]), fmax(a[1], b[1]));
+        x = Interval(fmin(a[2], b[2]), fmax(a[2], b[2]));
     }
 
-    const interval& axis(int n) const {
+    AABB(const AABB& box0, const AABB& box1) {
+        x = Interval(box0.x, box1.x);
+        y = Interval(box0.y, box1.y);
+        z = Interval(box0.z, box1.z);
+    }
+
+    const Interval& axis(int n) const {
         if(n == 1) return y;
         if(n == 2) return z;
         return x;
     }
 
-    bool hit(const ray& r, interval ray_t) const {
+    bool hit(const Ray& r, Interval ray_t) const {
         for (int a = 0; a < 3; a++) {
             auto invD = 1 / r.direction()[a];
             auto orig = r.origin()[a];

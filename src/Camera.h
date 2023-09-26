@@ -1,11 +1,11 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "common.h"
+#include "Common.h"
 
-class camera {
+class Camera {
 	public:
-		camera(
+		Camera(
 			point3 lookfrom,
 			point3 lookat,
 			vec3 vup,
@@ -35,11 +35,11 @@ class camera {
             time1 = _time1;
 		}
 
-		ray get_ray(double s, double t) const {
+		Ray get_ray(double s, double t) const {
 			vec3 rd = lens_radius * random_in_unit_disk();
 			vec3 offset = u * rd.x() + v * rd.y();
 
-			return ray(
+			return Ray(
 				origin + offset, 
 				lower_left_corner + s*horizontal + t*vertical - origin - offset,
                 random_double(time0, time1));

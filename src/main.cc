@@ -171,7 +171,7 @@ int main() {
 	const auto aspect_ratio = 16.0 / 9.0;
 	const int image_width = 300;
 	const int image_height = static_cast<int>(image_width / aspect_ratio);
-	const int samples_per_pixel = 1;
+	const int samples_per_pixel = 10;
 	const int max_depth = 50;
 
 	// World
@@ -188,42 +188,10 @@ int main() {
 	auto dist_to_focus = 6.0;
 	auto aperture = 0.1;
 
-	Camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
+	Camera cam(lookfrom, lookat, vup, 20, image_width, aspect_ratio, aperture, dist_to_focus, 0.0,
+               1.0);
 
 	// Render
-    time_t start = time(0);
-    char time_str[] = "Calculating";
-    double estimated_time = 0.0;
-    std::ofstream out("image.ppm");
-
-	out << "P3\n" << image_width << ' ' << image_height << "\n255\n";
-
-	for (int j = image_height-1; j >= 0; --j)
-	{
-        double minutes_remaining = estimated_time * j / 60.0;
-
-		std::clog << "\rEstimated time remaining: " << minutes_remaining << " minutes\t\t" <<
-        std::flush;
-		for (int i = 0; i < image_width; ++i)
-		{
-			color pixel_color(0, 0, 0);
-			for(int s = 0; s < samples_per_pixel; ++s)
-			{
-				auto u = (i + random_double()) / (image_width-1);
-				auto v = (j + random_double()) / (image_height-1);
-				Ray r = cam.get_ray(u, v);
-				pixel_color += ray_color(r, world, max_depth);
-			}
-            pixel_color /= samples_per_pixel;
-//			write_color(std::cout, pixel_color, samples_per_pixel);
-
-            out << static_cast<int>(pixel_color.x() * 255.999) << ' ' <<
-                   static_cast<int>(pixel_color.y() * 255.999) << ' ' <<
-                   static_cast<int>(pixel_color.z() * 255.999) << '\n';
-		}
-        estimated_time = difftime(time(0), start);
-        start = time(0);
-	}
-	std::clog << "\nDone.\n";
+    cam.render("image.ppm", 300, 150, world, 1);
 }
 

@@ -8,6 +8,7 @@
 #include "Sphere.h"
 #include "Mesh.h"
 #include "MovingSphere.h"
+#include "Texture.h"
 
 #include <iostream>
 color ray_color(const Ray& r, const Hittable& world, int depth)
@@ -34,9 +35,11 @@ color ray_color(const Ray& r, const Hittable& world, int depth)
 HittableList random_scene() {
     HittableList world;
 
-    auto ground_material = make_shared<Lambertian>(color(0.5, 0.5, 0.5));
-    world.add(make_shared<Sphere>(point3(0, -1000, 0), 1000, ground_material));
+//    auto ground_material = make_shared<Lambertian>(color(0.5, 0.5, 0.5));
+//    world.add(make_shared<Sphere>(point3(0, -1000, 0), 1000, ground_material));
 
+    auto checker = make_shared<CheckerTexture>(0.32, color(.2, .3, .1), color(.9, .9, .9));
+    world.add(make_shared<Sphere>(point3(0,-1000,0), 1000, make_shared<Lambertian>(checker)));
     for (int a = -11; a < 11; a++) {
         for (int b = -11; b < 11; b++) {
             auto choose_mat = random_double();
@@ -80,8 +83,11 @@ HittableList random_scene() {
 HittableList random_scene_moving() {
     HittableList world;
 
-    auto ground_material = make_shared<Lambertian>(color(0.5, 0.5, 0.5));
-    world.add(make_shared<Sphere>(point3(0, -1000, 0), 1000, ground_material));
+//    auto ground_material = make_shared<Lambertian>(color(0.5, 0.5, 0.5));
+//    world.add(make_shared<Sphere>(point3(0, -1000, 0), 1000, ground_material));
+
+    auto checker = make_shared<CheckerTexture>(0.32, color(.2, .3, .1), color(.9, .9, .9));
+    world.add(make_shared<Sphere>(point3(0,-1000,0), 1000, make_shared<Lambertian>(checker)));
 
     for (int a = -11; a < 11; a++) {
         for (int b = -11; b < 11; b++) {
@@ -165,15 +171,15 @@ int main() {
 	const auto aspect_ratio = 16.0 / 9.0;
 	const int image_width = 300;
 	const int image_height = static_cast<int>(image_width / aspect_ratio);
-	const int samples_per_pixel = 5;
+	const int samples_per_pixel = 1;
 	const int max_depth = 50;
 
 	// World
 	auto world = random_scene_moving();
 //	hittable_list world;
-    auto ground_material = make_shared<Lambertian>(color(0.5, 0.5, 0.5));
-    world.add(make_shared<Sphere>(point3(0, -1000, 0), 1000, ground_material));
-    world.add(m);
+//    auto ground_material = make_shared<Lambertian>(color(0.5, 0.5, 0.5));
+//    world.add(make_shared<Sphere>(point3(0, -1000, 0), 1000, ground_material));
+//    world.add(m);
 
     // Camera
 	point3 lookfrom(10,5,3);

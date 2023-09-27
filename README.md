@@ -13,5 +13,6 @@ Current features:
 - materials (diffused, Metal, Dielectric)
 - reflection/refraction
 - physically-based Camera
+- Bounded Volume Hierarchies for faster rendering
 - ppm image output
 

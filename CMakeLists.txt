@@ -24,4 +24,5 @@ add_executable(aeon-tracer
         src/Triangle.h
         src/vec3.h
         src/AABB.h
-        src/BVH.h)
+        src/BVH.h
+        src/Texture.h)

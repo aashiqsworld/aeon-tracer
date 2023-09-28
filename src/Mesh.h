@@ -15,7 +15,7 @@
 #include "int3.h"
 #include "Common.h"
 #include "Triangle.h"
-#include "OBJ_Loader.h"
+#include "external/OBJ_Loader.h"
 
 using namespace std;
 

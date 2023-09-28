@@ -10,9 +10,12 @@
 class Camera {
 public:
     point3 origin;
-    int image_width, image_height;
+    int image_width = 300, image_height = 150;
     int max_depth = 50;
+    int aspect_ratio = 1;
 
+
+    Camera() {}
     Camera(
         point3 lookfrom,
         point3 lookat,

@@ -18,11 +18,12 @@ add_executable(aeon-tracer
         src/Material.h
         src/Mesh.h
         src/MovingSphere.h
-        src/OBJ_Loader.h
+        src/external/OBJ_Loader.h
         src/Ray.h
         src/Sphere.h
         src/Triangle.h
         src/vec3.h
         src/AABB.h
         src/BVH.h
-        src/Texture.h)
+        src/Texture.h
+        src/Image.h)

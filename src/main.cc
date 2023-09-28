@@ -136,8 +136,7 @@ int round4(int x)
     return x % 4 == 0 ? x : x - x % 4 + 4;
 }
 
-// renders a ray in the scene
-int main() {
+void random_spheres() {
 
     // test stuff START
 
@@ -195,3 +194,59 @@ int main() {
     cam.render("image.ppm", 300, 150, world, 1);
 }
 
+void two_spheres()
+{
+    HittableList world;
+
+    auto checker = make_shared<CheckerTexture>(0.8, color(.2, .3, .1), color(.9, .9, .9));
+
+    world.add(make_shared<Sphere>(point3(0, -10, 0), 10, make_shared<Lambertian>(checker)));
+    world.add(make_shared<Sphere>(point3(0, 10, 0), 10, make_shared<Lambertian>(checker)));
+
+    float aspect_ratio = 16.0 / 9.0;
+    int image_width = 600;
+    int image_height = 150;
+
+    int fvov = 20;
+    point3 lookFrom = point3(13, 2, 3);
+    point3 lookAt = point3(0,0,0);
+    vec3 vUp = vec3(0,1,0);
+    auto aperture = 0.1;
+    auto focusDist = 6.0;
+
+    Camera cam(lookFrom, lookAt, vUp, fvov, image_width, aspect_ratio, aperture, focusDist, 0.0,
+               1.0);
+    cam.render("two_spheres.ppm", image_width, static_cast<int>((double)image_width * (1.0/aspect_ratio)),
+                                                        world, 10);
+
+}
+
+void earth() {
+    auto earth_texture = make_shared<ImageTexture>("earthmap.jpg");
+    auto earth_surface = make_shared<Lambertian>(earth_texture);
+    auto globe = make_shared<Sphere>(point3(0,0,0), 2, earth_surface);
+
+    auto aspect_ratio      = 16.0 / 9.0;
+    auto image_width       = 400;
+    auto samples_per_pixel = 100;
+    auto max_depth         = 50;
+    auto aperture = 0.1;
+    auto focus_dist = 6.0;
+    auto vfov     = 20;
+    auto lookfrom = point3(0,0,12);
+    auto lookat   = point3(0,0,0);
+    auto vup      = vec3(0,1,0);
+
+    Camera cam(lookfrom, lookat, vup, vfov, image_width, aspect_ratio, aperture, focus_dist);
+    cam.render("earth.ppm", image_width, static_cast<int>((double)image_width * (1.0/aspect_ratio)),
+               HittableList(globe), 5);
+}
+
+int main()
+{
+    switch(3) {
+        case 1: random_spheres(); break;
+        case 2: two_spheres(); break;
+        case 3: earth(); break;
+    }
+}

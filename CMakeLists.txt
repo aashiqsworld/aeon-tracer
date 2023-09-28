@@ -26,4 +26,5 @@ add_executable(aeon-tracer
         src/AABB.h
         src/BVH.h
         src/Texture.h
-        src/Image.h)
+        src/Image.h
+        src/Perlin.h)

@@ -227,7 +227,7 @@ void earth() {
     auto globe = make_shared<Sphere>(point3(0,0,0), 2, earth_surface);
 
     auto aspect_ratio      = 16.0 / 9.0;
-    auto image_width       = 400;
+    auto image_width       = 800;
     auto samples_per_pixel = 100;
     auto max_depth         = 50;
     auto aperture = 0.1;
@@ -239,14 +239,38 @@ void earth() {
 
     Camera cam(lookfrom, lookat, vup, vfov, image_width, aspect_ratio, aperture, focus_dist);
     cam.render("earth.ppm", image_width, static_cast<int>((double)image_width * (1.0/aspect_ratio)),
-               HittableList(globe), 5);
+               HittableList(globe), 100);
+}
+
+void two_perlin_spheres() {
+    HittableList world;
+
+    auto pertext = make_shared<noise_texture>();
+    world.add(make_shared<Sphere>(point3(0,-1000,0), 1000, make_shared<Lambertian>(pertext)));
+    world.add(make_shared<Sphere>(point3(0,2,0), 2, make_shared<Lambertian>(pertext)));
+
+    auto aspect_ratio      = 16.0 / 9.0;
+    auto image_width       = 400;
+    auto samples_per_pixel = 100;
+    auto max_depth         = 50;
+    auto aperture = 0.1;
+    auto focus_dist = 6.0;
+    auto vfov     = 20;
+    auto lookfrom = point3(13,2,3);
+    auto lookat   = point3(0,0,0);
+    auto vup      = vec3(0,1,0);
+
+    Camera cam(lookfrom, lookat, vup, vfov, image_width, aspect_ratio, aperture, focus_dist);
+    cam.render("earth.ppm", image_width, static_cast<int>((double)image_width * (1.0/aspect_ratio)),
+               world, 100);
 }
 
 int main()
 {
-    switch(3) {
+    switch(2) {
         case 1: random_spheres(); break;
         case 2: two_spheres(); break;
         case 3: earth(); break;
+        case 4: two_perlin_spheres(); break;
     }
 }

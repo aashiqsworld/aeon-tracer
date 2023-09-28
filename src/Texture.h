@@ -3,6 +3,7 @@
 
 #include "Common.h"
 #include "Image.h"
+#include "Perlin.h"
 
 using namespace std;
 
@@ -77,6 +78,19 @@ public:
 
 private:
     Image image;
+};
+
+
+class noise_texture : public Texture {
+public:
+    noise_texture() {}
+
+    color value(double u, double v, const point3& p) const override {
+        return color(1,1,1) * noise.noise(p);
+    }
+
+private:
+    Perlin noise;
 };
 
 #endif
